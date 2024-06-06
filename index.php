@@ -55,7 +55,6 @@
         .pagination a.active {
             background-color: #e5e5e5;
         }
-        /* Piirab paginatsiooninuppude laiust */
         @media only screen and (max-width: 600px) {
             .pagination a {
                 max-width: 50px;
@@ -64,26 +63,31 @@
                 text-overflow: ellipsis;
             }
         }
+        .logi:hover {
+            background-color: #555;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
 
+    <a href="admin.php" class="logi">Logi sisse</a>
+
 <?php
-// Andmebaasi ühenduse seadistamine (server, kasutajanimi, parool, andmebaasi nimi)
+//andmebaasi andmed
 $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "restod";
 
-// Andmebaasiga ühendamine
+//andmebaasiga ühendamine
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Ühendus ebaõnnestus: " . $conn->connect_error);
 }
 
-// Lehekülje numbrile vastavate ridade arvutamine
+//restoranide hulk ühel leheküljel
 $records_per_page = 10;
 if (isset($_GET['page']) && is_numeric($_GET['page'])) {
     $page = $_GET['page'];
@@ -92,7 +96,7 @@ if (isset($_GET['page']) && is_numeric($_GET['page'])) {
 }
 $start_from = ($page - 1) * $records_per_page;
 
-// Sorteerimise tingimus
+//restoranide sorteerimine
 $order_by = "";
 if (isset($_GET['sort'])) {
     switch ($_GET['sort']) {
@@ -126,7 +130,7 @@ if (isset($_GET['sort'])) {
     }
 }
 
-// Kontrollige, kas otsing on määratud
+//kas otsingus on midagi sisestatud
 $search = "";
 $search_condition = "";
 if (isset($_GET['search']) && !empty($_GET['search'])) {
@@ -134,11 +138,11 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
     $search_condition = "WHERE Nimi LIKE '%$search%'";
 }
 
-// Andmebaasi päringu ettevalmistamine ja tegemine piiratud arvu ridade jaoks
+//andmebaasi päring
 $sql = "SELECT id, Nimi, Asukoht, Keskmine_hinne, Hinnatud_kordi FROM restokad $search_condition $order_by LIMIT $start_from, $records_per_page";
 $result = $conn->query($sql);
 
-// Tabeli loomine
+//tabel
 if ($result->num_rows > 0) {
     echo "<table>
             <thead>
@@ -164,7 +168,7 @@ if ($result->num_rows > 0) {
     echo "Andmed puuduvad";
 }
 
-// Lehekülje navigatsioon
+//leheküljed
 echo "<div class='pagination'>";
 if ($page > 1) {
     echo "<a href='?page=" . ($page - 1) . "&search=" . urlencode($search) . "'>Eelmised</a>";
@@ -178,11 +182,9 @@ if ($page < $total_pages) {
 }
 echo "</div>";
 
-// Andmebaasi ühenduse sulgemine
 $conn->close();
 ?>
 
-<!-- Otsingu vorm -->
 <div>
     <form method="GET">
         <input type="text" name="search" placeholder="Otsi ettevõtet..." value="<?php echo htmlspecialchars($search); ?>">

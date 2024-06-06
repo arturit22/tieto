@@ -1,4 +1,5 @@
 <?php
+//andmebaasi andmed
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -9,6 +10,7 @@ if ($conn->connect_error) {
     die("Ühendus ebaõnnestus: " . $conn->connect_error);
 }
 
+//võtab väljadest infot
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id = $_POST["id"];
     $kasutajanimi = $conn->real_escape_string($_POST["kasutajanimi"]);
@@ -16,6 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $kommentaar = $conn->real_escape_string($_POST["kommentaar"]);
     $errors = [];
 
+    //kontrollib kas väljad on sisestatud
     if (empty($kasutajanimi)) {
         $errors[] = "Kasutajanimi on kohustuslik.";
     }
@@ -26,6 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $errors[] = "Kommentaar on kohustuslik.";
     }
 
+    //kui hinnangu ei õnnestunud jätta, annab sellest teada
     if (empty($errors)) {
         $sql = "INSERT INTO hinnangud (kasutajanimi, hinnang, kommentaar, restoran_id) VALUES ('$kasutajanimi', '$hinnang', '$kommentaar', '$id')";
         if ($conn->query($sql) === TRUE) {
